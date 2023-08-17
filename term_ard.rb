@@ -16,10 +16,14 @@ class ArdTerm
     while true
       temp = @ser.gets
       if temp # Might get bombarded by nil
-        puts "brrrr"
+        #puts "brrrr"
         result += temp
         return result if temp[-1] == "\n"
       end
     end
+  end
+
+  def close
+    @ser.close
   end
 end

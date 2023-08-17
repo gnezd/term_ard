@@ -30,7 +30,7 @@ void loop() {
         read_temp = analogRead(pin_to_read);
         read_temp = analogRead(pin_to_read);
         Serial.print((double)read_temp*5.0/1024, 5);
-        Serial.print(" ");
+        Serial.print("\t");
       }
       Serial.print("\n");
     } else { // Read all pins
@@ -39,7 +39,7 @@ void loop() {
       read_temp = analogRead(i);
       read_temp = analogRead(i);
       Serial.print((double)read_temp*5.0/1024, 5);
-      Serial.print(" ");
+      Serial.print("\t");
       }
       Serial.print("\n");
     }
@@ -81,6 +81,5 @@ void loop() {
   }
 
   //delay(500);
-  command = '\0';
   delay(10);
 }
