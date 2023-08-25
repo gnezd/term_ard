@@ -10,17 +10,34 @@ class ArdTerm
 
   # Send command and return results
   def cmd(command)
+    puts "---before cmd is sent---"
+    puts read # Flushing RX buffer
+    puts "-----"
+    
     @ser.flush
     @ser.puts command
+    read(true)
+  end
+
+  def read(exp = false)
     result = ""
-    while true
-      temp = @ser.gets
-      if temp # Might get bombarded by nil
-        #puts "brrrr"
-        result += temp
-        return result if temp[-1] == "\n"
+    empty_count = 0
+    if exp == true # Expecting return
+      while (temp = @ser.read) && (temp == "")
       end
+      puts temp
+      result += temp
+      sleep 0.01
     end
+    while (temp = @ser.read)
+      if temp == ""
+        empty_count +=1
+        result += '-'
+      end
+      result += temp
+      break if empty_count > 100
+    end
+    result
   end
 
   def close
