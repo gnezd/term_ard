@@ -1,5 +1,14 @@
 require './term_ard'
+require 'pry'
 at = ArdTerm.new '/dev/ttyACM0'
+puts "Inited"
+t0 = Time.now
 
-puts at.cmd "RRR"
+10.times do
+  puts at.cmd "R0-50"
+end
+
+puts Time.now - t0
+
+binding.pry
 at.close
