@@ -11,8 +11,10 @@ unsigned long cycle_length = 5000; // Cycle delay in ms
 
 void loop() {
   String command = "";
-  String response;
+  String response = "";
+  String list_rep;
   String pinlist;
+  String values;
   int reps = 1;
   int read_temp;
 
@@ -29,12 +31,8 @@ void loop() {
       break;
     
     case 'R':
-      pinlist = command.substring(1);
-      int hyphen_position = pinlist.indexOf('-'); // -1 if single shot
-      if (hyphen_position > -1) {
-        reps = pinlist.substring(hyphen_position+1, pinlist.length()).toInt();
-        pinlist = pinlist.substring(0, hyphen_position);
-      }
+      list_rep = command.substring(1);
+      split_reps(list_rep, &pinlist, &reps);
 
       for (int rep = 0; rep < reps; rep +=1) {
         for (int nthpin = 0; nthpin < pinlist.length(); nthpin +=1) {
@@ -50,6 +48,39 @@ void loop() {
       break;
 
     case 'O':
+      list_rep = command.substring(2);
+      split_output(list_rep, &pinlist, &values);
+
+      switch (command[1]) 
+      {
+        case 'D':
+          for (int nthpin = 0; nthpin < pinlist.length(); nthpin += 1) {
+            int pin_num = pinlist[nthpin] - '0';
+            if (values[nthpin] == 'H') {
+              digitalWrite(pin_num, HIGH);
+            } else if (values[nthpin] == 'H') {
+              digitalWrite(pin_num, LOW);
+            }
+          }
+          response = "OK";
+          break;
+        case 'A':
+          for (int nthpin = 0; nthpin < pinlist.length(); nthpin += 1) {
+            int pin_num = pinlist[nthpin] - '0';
+            int value = values.substring(nthpin*3, nthpin*3 + 3).toInt();
+            analogWrite(pin_num, value);
+            response.concat(pin_num);
+            response.concat('-');
+            response.concat(value);
+            response.concat('|');
+          }
+          break;
+        default:
+        talk(command);
+
+      }
+
+      talk(response);
       break;
 
     default:
@@ -66,5 +97,23 @@ void talk(String message) {
     Serial.write(message.length());
     Serial.print(message);
     Serial.write(3); //ETX end of text
+  }
+}
+
+// Split pinlist-repetition
+void split_reps(String list_rep, String *pinlist, int *reps) {
+  int hyphen_position = list_rep.indexOf('-'); // -1 if single shot
+  if (hyphen_position > -1) {
+    *reps = list_rep.substring(hyphen_position+1, list_rep.length()).toInt();
+    *pinlist = list_rep.substring(0, hyphen_position);
+  }
+}
+
+// Split pinlist-values
+void split_output(String list_rep, String *pinlist, String *values) {
+  int hyphen_position = list_rep.indexOf('-'); // -1 if single shot
+  if (hyphen_position > -1) {
+    *values = list_rep.substring(hyphen_position+1, list_rep.length());
+    *pinlist = list_rep.substring(0, hyphen_position);
   }
 }
