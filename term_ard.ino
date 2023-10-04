@@ -21,7 +21,7 @@ void loop() {
   // Perform pin IO
   // Write output
   if (command.length() > 0){
-    response.concat(response)
+    response.concat(response);
   } else {
   }
   delay(cycle_length);
