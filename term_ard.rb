@@ -2,7 +2,7 @@
 require 'serialport'
 class ArdTerm
   attr_accessor :ser # Expose serial for debugging
-  def initialize(tty_path='/dev/ttyUSB0', bd_rate = 19200)
+  def initialize(tty_path='/dev/ttyACM0', bd_rate = 19200)
     @ser = SerialPort.new tty_path, bd_rate, 8 # Will the number of data bits ever be different from 8?
     @ser.read_timeout=10 # We have no patience here
     sleep 0.01
